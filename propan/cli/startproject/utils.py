@@ -3,7 +3,7 @@ from typing import Union, cast
 
 
 def touch_dir(dir: Union[Path, str]) -> Path:
-    if isinstance(dir, str) is True:
+    if isinstance(dir, str):
         dir = Path(dir).resolve()
 
     dir = cast(Path, dir)

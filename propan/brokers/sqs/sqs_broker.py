@@ -220,20 +220,16 @@ class SQSBroker(BrokerUsecase):
     ) -> None:
         queue_url = await self.get_queue(queue)
 
-        if callback is True:
+        if callback:
             reply_to = reply_to or self.response_queue
             if not reply_to:
                 raise ValueError(
                     "You should specify `response_queue` at init or use `reply_to` argument"
                 )
 
-        if reply_to:
-            correlation_id = str(uuid4())
-        else:
-            correlation_id = ""
-
+        correlation_id = str(uuid4()) if reply_to else ""
         response_future: Optional["asyncio.Future[DecodedMessage]"]
-        if callback is True:
+        if callback:
             response_future = asyncio.Future()
             self.response_callbacks[correlation_id] = response_future
         else:
@@ -258,7 +254,7 @@ class SQSBroker(BrokerUsecase):
             try:
                 response = await asyncio.wait_for(response_future, callback_timeout)
             except asyncio.TimeoutError as e:
-                if raise_timeout is True:
+                if raise_timeout:
                     raise e
                 return None
             else:
@@ -369,8 +365,7 @@ class SQSBroker(BrokerUsecase):
     def _get_log_context(
         self, message: Optional[PropanMessage], queue: str
     ) -> Dict[str, Any]:
-        context = {
+        return {
             "queue": queue,
             **super()._get_log_context(message),
         }
-        return context

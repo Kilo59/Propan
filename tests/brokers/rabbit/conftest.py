@@ -21,8 +21,7 @@ class Settings(BaseSettings):
 
 @pytest.fixture
 def queue():
-    name = str(uuid4())
-    return name
+    return str(uuid4())
 
 
 @pytest.fixture

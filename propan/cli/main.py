@@ -21,17 +21,11 @@ cli.add_typer(
 
 
 def version_callback(version: bool) -> None:
-    if version is True:
+    if version:
         import platform
 
         typer.echo(
-            "Running Propan %s with %s %s on %s"
-            % (
-                __version__,
-                platform.python_implementation(),
-                platform.python_version(),
-                platform.system(),
-            )
+            f"Running Propan {__version__} with {platform.python_implementation()} {platform.python_version()} on {platform.system()}"
         )
 
         raise typer.Exit()
@@ -85,7 +79,7 @@ def run(
     if reload and workers > 1:
         raise ValueError("You can't use reload option with multiprocessing")
 
-    if reload is True:
+    if reload:
         from propan.cli.supervisors.watchfiles import WatchReloader
 
         WatchReloader(target=_run, args=args, reload_dirs=(app_dir,)).run()

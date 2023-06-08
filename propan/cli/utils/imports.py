@@ -16,9 +16,7 @@ def import_object(module: Path, app: str) -> Any:
         raise ValueError(f"{spec} has no loader")
 
     loader.exec_module(mod)
-    obj = getattr(mod, app)
-
-    return obj
+    return getattr(mod, app)
 
 
 def get_app_path(app: str) -> Tuple[Path, str]:

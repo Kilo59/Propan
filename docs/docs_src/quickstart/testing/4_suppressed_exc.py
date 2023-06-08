@@ -3,4 +3,4 @@ def test_publish(test_broker):
         {"msg": "ping"}, "ping",
         callback=True, callback_timeout=1
     )
-    assert r == None
+    assert r is None

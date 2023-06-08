@@ -10,5 +10,5 @@ async def base_dep(body: dict) -> bool:
 async def base_handler(body: dict,
                        dep: bool = Depends(base_dep),
                        logger: Logger = Context()):
-    assert dep is True
+    assert dep
     logger.info(body)

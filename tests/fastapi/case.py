@@ -14,7 +14,7 @@ class FastAPITestcase:
     @pytest.mark.asyncio
     async def test(self):
         name = str(uuid4())
-        name2 = name + "1"
+        name2 = f"{name}1"
 
         router = self.router_class()
         router.broker = self.broker_test(router.broker)

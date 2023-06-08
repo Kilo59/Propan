@@ -19,4 +19,4 @@ def setup(context: ContextRepo):
 
 @broker.handle("test")
 async def base_handler(body: dict, my_dependency: bool = Context()):
-    assert my_dependency is True
+    assert my_dependency

@@ -61,7 +61,7 @@ class BrokerConsumeTestcase:
         mock.method.side_effect = lambda *_: first_consume.set()  # pragma: no branch
         mock.method2.side_effect = lambda *_: second_consume.set()  # pragma: no branch
 
-        another_topic = queue + "1"
+        another_topic = f"{queue}1"
         async with broker:
             broker.handle(queue)(mock.method)
             broker.handle(another_topic)(mock.method2)

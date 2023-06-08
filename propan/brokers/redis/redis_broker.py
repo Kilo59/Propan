@@ -142,7 +142,7 @@ class RedisBroker(BrokerUsecase):
 
         msg, content_type = self._encode_message(message)
 
-        if callback is True:
+        if callback:
             callback_channel = str(uuid4())
             psub = self._connection.pubsub()
             response_queue = asyncio.Queue(maxsize=1)
@@ -172,7 +172,7 @@ class RedisBroker(BrokerUsecase):
                     response_queue.get(), callback_timeout
                 )
             except asyncio.TimeoutError as e:
-                if raise_timeout is True:
+                if raise_timeout:
                     raise e
                 return None
             else:
@@ -213,11 +213,10 @@ class RedisBroker(BrokerUsecase):
     def _get_log_context(
         self, message: Optional[PropanMessage], channel: str
     ) -> Dict[str, Any]:
-        context = {
+        return {
             "channel": channel,
             **super()._get_log_context(message),
         }
-        return context
 
     @property
     def fmt(self) -> str:

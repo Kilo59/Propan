@@ -26,11 +26,9 @@ class NatsJSBroker(NatsBroker):
 
         nc = await nats.connect(*args, **kwargs)
 
-        stream = await nc.jetstream(
+        return await nc.jetstream(
             **self._js.dict(include={"prefix", "domain", "timeout"})
         )
-
-        return stream
 
     @staticmethod
     def _process_message(
@@ -40,15 +38,14 @@ class NatsJSBroker(NatsBroker):
         async def wrapper(message: Msg) -> Any:
             if watcher is None:
                 return await func(message)
-            else:
-                async with WatcherContext(
-                    watcher,
-                    message.message_id,
-                    on_success=message.ack,
-                    on_error=message.nak,
-                    on_max=message.term,
-                ):
-                    await message.in_progress()
-                    return await func(message)
+            async with WatcherContext(
+                watcher,
+                message.message_id,
+                on_success=message.ack,
+                on_error=message.nak,
+                on_max=message.term,
+            ):
+                await message.in_progress()
+                return await func(message)
 
         return wrapper

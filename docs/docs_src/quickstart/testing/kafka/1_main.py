@@ -4,9 +4,6 @@ broker = KafkaBroker()
 
 @broker.handler("ping")
 async def healthcheck(msg: str) -> str:
-    if msg == "ping":
-        return "pong"
-    else:
-        return "wrong"
+    return "pong" if msg == "ping" else "wrong"
 
 app = PropanApp(broker)

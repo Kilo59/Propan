@@ -63,7 +63,7 @@ class BrokerRPCTestcase:
     ):
         consume = asyncio.Event()
         mock.side_effect = lambda *_: consume.set()  # pragma: no branch
-        reply_queue = queue + "1"
+        reply_queue = f"{queue}1"
 
         @full_broker.handle(reply_queue)
         async def response_hanler(m: str):

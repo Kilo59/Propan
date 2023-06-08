@@ -106,10 +106,7 @@ async def publish(
                     if callback:  # pragma: no branch
                         return r
 
-        elif (  # pragma: no branch
-            handler.exchange.type == ExchangeType.DIRECT
-            or handler.exchange.type == ExchangeType.TOPIC
-        ):
+        elif handler.exchange.type in [ExchangeType.DIRECT, ExchangeType.TOPIC]:
             if handler.queue.name == incoming.routing_key:
                 r = await call_handler(
                     handler, incoming, callback, callback_timeout, raise_timeout

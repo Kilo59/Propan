@@ -54,7 +54,7 @@ class KafkaBroker(BrokerUsecase):
         self,
         **kwargs: Any,
     ) -> AIOKafkaConsumer:
-        kwargs["client_id"] = kwargs.get("client_id", "propan-" + __version__)
+        kwargs["client_id"] = kwargs.get("client_id", f"propan-{__version__}")
 
         producer = AIOKafkaProducer(**kwargs)
         context.set_global("producer", producer)
@@ -200,7 +200,7 @@ class KafkaBroker(BrokerUsecase):
             **(headers or {}),
         }
 
-        if callback is True:
+        if callback:
             reply_to = reply_to or self.response_topic
             if not reply_to:
                 raise ValueError(
@@ -209,17 +209,15 @@ class KafkaBroker(BrokerUsecase):
 
         if reply_to:
             correlation_id = str(uuid4())
-            headers_to_send.update(
-                {
-                    "reply_to": reply_to,
-                    "correlation_id": correlation_id,
-                }
-            )
+            headers_to_send |= {
+                "reply_to": reply_to,
+                "correlation_id": correlation_id,
+            }
         else:
             correlation_id = ""
 
         response_future: Optional["asyncio.Future[DecodedMessage]"]
-        if callback is True:
+        if callback:
             response_future = asyncio.Future()
             self.response_callbacks[correlation_id] = response_future
         else:
@@ -238,7 +236,7 @@ class KafkaBroker(BrokerUsecase):
             try:
                 response = await asyncio.wait_for(response_future, callback_timeout)
             except asyncio.TimeoutError as e:
-                if raise_timeout is True:
+                if raise_timeout:
                     raise e
                 return None
             else:

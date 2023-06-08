@@ -91,11 +91,9 @@ def make_record_with_extra(
     if extra is None:
         extra = context.get_local("log_context")
 
-    record = original_makeRecord(
+    return original_makeRecord(
         self, name, level, fn, lno, msg, args, exc_info, func, extra, sinfo
     )
-
-    return record
 
 
 def expand_log_field(field: str, symbols: int) -> str:

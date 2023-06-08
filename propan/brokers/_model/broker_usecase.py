@@ -225,10 +225,10 @@ class BrokerUsecase(ABC):
             msg = await self._decode_message(message)
             message.decoded_body = msg
 
-            if _raw is True:
+            if _raw:
                 return await func(message)
 
-            elif is_unwrap is True and isinstance(msg, Mapping):
+            elif is_unwrap and isinstance(msg, Mapping):
                 return await func(**msg)
 
             else:

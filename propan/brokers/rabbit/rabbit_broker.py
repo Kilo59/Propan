@@ -143,7 +143,7 @@ class RabbitBroker(BrokerUsecase):
 
         queue, exchange = _validate_queue(queue), _validate_exchange(exchange)
 
-        if callback is not False:
+        if callback:
             callback_queue = await self._channel.declare_queue(exclusive=True)
         else:
             callback_queue = None
@@ -170,16 +170,15 @@ class RabbitBroker(BrokerUsecase):
         if callback_queue is None:
             return r
 
+        iter = callback_queue.iterator()
+        await iter.consume()
+        try:
+            msg = await asyncio.wait_for(iter._queue.get(), callback_timeout)
+        except asyncio.TimeoutError as e:
+            if raise_timeout:  # pragma: no branch
+                raise e
         else:
-            iter = callback_queue.iterator()
-            await iter.consume()
-            try:
-                msg = await asyncio.wait_for(iter._queue.get(), callback_timeout)
-            except asyncio.TimeoutError as e:
-                if raise_timeout is True:  # pragma: no branch
-                    raise e
-            else:
-                return await self._decode_message(msg)
+            return await self._decode_message(msg)
 
     async def _init_handler(
         self,
@@ -227,12 +226,11 @@ class RabbitBroker(BrokerUsecase):
         queue: RabbitQueue,
         exchange: Optional[RabbitExchange] = None,
     ) -> Dict[str, Any]:
-        context = {
+        return {
             "queue": queue.name,
             "exchange": exchange.name if exchange else "default",
             **super()._get_log_context(message),
         }
-        return context
 
     @property
     def fmt(self) -> str:

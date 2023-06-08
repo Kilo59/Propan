@@ -18,10 +18,7 @@ def change_logger_handlers(logger: logging.Logger, fmt: str) -> None:
         formatter = handler.formatter
         if formatter is not None:
             use_colors = getattr(formatter, "use_colors", None)
-            if use_colors is not None:
-                kwargs = {"use_colors": use_colors}
-            else:
-                kwargs = {}
+            kwargs = {"use_colors": use_colors} if use_colors is not None else {}
             handler.setFormatter(type(formatter)(fmt, **kwargs))
 
 
@@ -31,12 +28,11 @@ def get_watcher(
 ) -> Optional[BaseWatcher]:
     watcher: Optional[BaseWatcher]
     if try_number is True:
-        watcher = FakePushBackWatcher()
+        return FakePushBackWatcher()
     elif try_number is False:
-        watcher = None
+        return None
     else:
-        watcher = PushBackWatcher(logger=logger, max_tries=try_number)
-    return watcher
+        return PushBackWatcher(logger=logger, max_tries=try_number)
 
 
 def suppress_decor(
@@ -47,7 +43,7 @@ def suppress_decor(
         try:
             return await func(message)
         except Exception as e:
-            if reraise_exc is True:
+            if reraise_exc:
                 raise e
             return None
 

@@ -122,7 +122,7 @@ class NatsBroker(BrokerUsecase):
 
         client = self._connection
 
-        if callback is True and not reply_to:
+        if callback and not reply_to:
             token = client._nuid.next()
             token.extend(token_hex(2).encode())
             reply_to = token.decode()
@@ -154,7 +154,7 @@ class NatsBroker(BrokerUsecase):
             except asyncio.TimeoutError as e:
                 await sub.unsubscribe()
                 future.cancel()
-                if raise_timeout is True:
+                if raise_timeout:
                     raise e
                 return None
             else:
@@ -176,12 +176,11 @@ class NatsBroker(BrokerUsecase):
         subject: str,
         queue: str = "",
     ) -> Dict[str, Any]:
-        context = {
+        return {
             "subject": subject,
             "queue": queue,
             **super()._get_log_context(message),
         }
-        return context
 
     @property
     def fmt(self) -> str:

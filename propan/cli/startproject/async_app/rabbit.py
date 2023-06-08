@@ -68,8 +68,7 @@ def _create_config_dir(config: Path) -> Path:
 
 
 def _create_core_dir(core: Path) -> Path:
-    core_dir = create_core_dir(core, "RabbitBroker")
-    return core_dir
+    return create_core_dir(core, "RabbitBroker")
 
 
 def _create_apps_dir(apps: Path) -> Path:

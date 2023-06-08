@@ -121,11 +121,7 @@ class PropanRouter(APIRouter, Generic[Broker]):
         return decorator
 
     def _wrap_lifespan(self, lifespan: Optional[Lifespan[Any]] = None) -> Lifespan[Any]:
-        if lifespan is not None:
-            lifespan_context = lifespan
-        else:
-            lifespan_context = _DefaultLifespan(self)
-
+        lifespan_context = lifespan if lifespan is not None else _DefaultLifespan(self)
         @asynccontextmanager
         async def start_broker_lifespan(
             app: FastAPI,

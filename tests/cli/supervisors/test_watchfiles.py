@@ -23,7 +23,7 @@ def test_base():
     processor.run()
 
     code = abs(processor._process.exitcode)
-    assert code == signal.SIGTERM.value or code == 0
+    assert code in [signal.SIGTERM.value, 0]
 
 
 def touch_file(file: Path):  # pragma: no cover

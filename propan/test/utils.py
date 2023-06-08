@@ -16,9 +16,9 @@ async def call_handler(
             handler.callback(message), timeout=callback_timeout
         )
     except asyncio.TimeoutError as e:
-        if raise_timeout is True:  # pragma: no branch
+        if raise_timeout:  # pragma: no branch
             raise e
         result = None
 
-    if callback is True:  # pragma: no branch
+    if callback:  # pragma: no branch
         return result
